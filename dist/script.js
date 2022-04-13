@@ -5028,6 +5028,13 @@ window.addEventListener('DOMContentLoaded', function () {
     btns: '.next'
   });
   slider.render();
+  var modulePageSlider = new _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_0__["default"]({
+    container: '.moduleapp',
+    btns: '.next',
+    btnNext: '.nextmodule',
+    btnPrev: '.prevmodule'
+  });
+  modulePageSlider.render();
   var showUpSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__["default"]({
     container: '.showup__content-slider',
     prev: '.showup__prev',
@@ -5479,10 +5486,10 @@ var MainSlider =
 function (_Slider) {
   _inherits(MainSlider, _Slider);
 
-  function MainSlider(btns) {
+  function MainSlider(btns, btnNext, btnPrev) {
     _classCallCheck(this, MainSlider);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(MainSlider).call(this, btns));
+    return _possibleConstructorReturn(this, _getPrototypeOf(MainSlider).call(this, btns, btnNext, btnPrev));
   }
 
   _createClass(MainSlider, [{
@@ -5501,7 +5508,7 @@ function (_Slider) {
       try {
         this.hanson.style.opacity = '0';
 
-        if (n === 3) {
+        if (n == 3) {
           this.hanson.classList.add('animated');
           setTimeout(function () {
             _this.hanson.style.opacity = '1';
@@ -5524,26 +5531,49 @@ function (_Slider) {
       this.showSlides(this.slideIndex += n);
     }
   }, {
-    key: "render",
-    value: function render() {
+    key: "bindTriggers",
+    value: function bindTriggers() {
       var _this2 = this;
 
-      try {
-        this.hanson = document.querySelector('.hanson');
-      } catch (e) {}
-
-      this.btns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
+      this.btns.forEach(function (item) {
+        item.addEventListener('click', function () {
           _this2.plusSlides(1);
         });
-        btn.parentNode.previousElementSibling.addEventListener('click', function (e) {
+        item.parentNode.previousElementSibling.addEventListener('click', function (e) {
           e.preventDefault();
           _this2.slideIndex = 1;
 
           _this2.showSlides(_this2.slideIndex);
         });
       });
-      this.showSlides(this.slideIndex);
+      this.btnPrev.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+
+          _this2.plusSlides(-1);
+        });
+      });
+      this.btnNext.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+
+          _this2.plusSlides(1);
+        });
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      if (this.container) {
+        try {
+          this.hanson = document.querySelector('.hanson');
+        } catch (e) {}
+
+        this.showSlides(this.slideIndex);
+        this.bindTriggers();
+      }
     }
   }]);
 
@@ -5696,15 +5726,17 @@ function (_Slider) {
     value: function init() {
       var _this3 = this;
 
-      this.container.style.cssText = "\n            display: flex;\n            flex-wrap: wrap;\n            overflow: hidden;\n            align-items: flex-start;\n        ";
-      this.bindTriggers();
-      this.decorizeSlides();
+      try {
+        this.container.style.cssText = "\n            display: flex;\n            flex-wrap: wrap;\n            overflow: hidden;\n            align-items: flex-start;\n            ";
+        this.bindTriggers();
+        this.decorizeSlides();
 
-      if (this.autoplay) {
-        setInterval(function () {
-          return _this3.nextSlide();
-        }, 5000);
-      }
+        if (this.autoplay) {
+          setInterval(function () {
+            return _this3.nextSlide();
+          }, 5000);
+        }
+      } catch (e) {}
     }
   }]);
 
@@ -5733,6 +5765,10 @@ var Slider = function Slider() {
       container = _ref$container === void 0 ? null : _ref$container,
       _ref$btns = _ref.btns,
       btns = _ref$btns === void 0 ? null : _ref$btns,
+      _ref$btnNext = _ref.btnNext,
+      btnNext = _ref$btnNext === void 0 ? null : _ref$btnNext,
+      _ref$btnPrev = _ref.btnPrev,
+      btnPrev = _ref$btnPrev === void 0 ? null : _ref$btnPrev,
       _ref$next = _ref.next,
       next = _ref$next === void 0 ? null : _ref$next,
       _ref$prev = _ref.prev,
@@ -5745,7 +5781,13 @@ var Slider = function Slider() {
   _classCallCheck(this, Slider);
 
   this.container = document.querySelector(container);
-  this.slides = this.container.children;
+
+  try {
+    this.slides = this.container.children;
+  } catch (e) {}
+
+  this.btnNext = document.querySelectorAll(btnNext);
+  this.btnPrev = document.querySelectorAll(btnPrev);
   this.btns = document.querySelectorAll(btns);
   this.prev = document.querySelector(prev);
   this.next = document.querySelector(next);
